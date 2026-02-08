@@ -4,29 +4,41 @@
 
 A skill that assembles a virtual IT team to take a feature from idea to implementation. Each team member is a specialized subagent with a focused role, working as a pipeline with user approval at every stage.
 
-**Supported platforms:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | [OpenCode](https://opencode.ai)
+**Supported platforms:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | [OpenCode](https://opencode.ai) | [OpenAI Codex](https://developers.openai.com/codex)
 
-> **[Русская версия / Russian version](README_RU.md)**
+> **[Русская версия ниже / Russian version below](#team-develop--виртуальная-it-команда)**
+
+---
 
 ## Quick Start
+
+### Claude Code / OpenCode
 
 ```bash
 # One-line install (Claude Code + OpenCode)
 curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
 ```
 
-Or clone and run locally:
-
-```bash
-git clone https://github.com/anthropics/team-develop-skill.git
-cd team-develop-skill
-./install.sh
-```
-
 Then start a new session and type:
 
 ```
 /team-develop
+```
+
+### OpenAI Codex
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+
+# Copy skill files to user-level Codex skills directory
+mkdir -p ~/.agents/skills/team-develop
+cp /tmp/team-develop-skill/skills/team-develop/* ~/.agents/skills/team-develop/
+```
+
+Then start a Codex session and type:
+
+```
+$team-develop
 ```
 
 ## Team Roles
@@ -43,7 +55,7 @@ Then start a new session and type:
 ## Pipeline
 
 ```
-/team-develop
+/team-develop (or $team-develop in Codex)
     |
     Phase 0: Discovery (brainstorming) ── CHECKPOINT
     |
@@ -66,7 +78,7 @@ Every checkpoint presents the stage output to you and waits for approval. You ca
 
 ## Installation
 
-### Automatic (recommended)
+### Automatic (Claude Code + OpenCode)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
@@ -120,13 +132,52 @@ mkdir -p ~/.config/opencode/commands
 cp /tmp/team-develop-skill/commands/team-develop.md ~/.config/opencode/commands/team-develop.md
 ```
 
+### Manual: OpenAI Codex
+
+Codex discovers skills from `~/.agents/skills/` (user-level) or `.agents/skills/` (project-level). The SKILL.md format is already compatible — no adaptation needed.
+
+#### User-level (available in all projects)
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+
+# Copy skill files
+mkdir -p ~/.agents/skills/team-develop
+cp /tmp/team-develop-skill/skills/team-develop/* ~/.agents/skills/team-develop/
+```
+
+#### Project-level (available only in this repo)
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+
+# Copy skill files into your project
+mkdir -p .agents/skills/team-develop
+cp /tmp/team-develop-skill/skills/team-develop/* .agents/skills/team-develop/
+```
+
+> **Note:** Codex does not use slash commands (`/`). Skills are invoked via `$team-develop` or activated implicitly when the task matches the skill description. There is no need to copy files from the `commands/` directory.
+
+#### Verify installation
+
+Start a new Codex session and type:
+
+```
+$team-develop
+```
+
+The skill should activate and begin the discovery phase.
+
 ### Symlink (for development)
 
 ```bash
 git clone https://github.com/anthropics/team-develop-skill.git ~/team-develop-skill
 
-# Skill (works for both Claude Code and OpenCode)
+# Skill — Claude Code / OpenCode
 ln -s ~/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
+
+# Skill — Codex
+ln -s ~/team-develop-skill/skills/team-develop ~/.agents/skills/team-develop
 
 # Command — Claude Code
 ln -s ~/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-develop.md
@@ -137,11 +188,13 @@ ln -s ~/team-develop-skill/commands/team-develop.md ~/.config/opencode/commands/
 
 ### Verify installation
 
-Start a new session (Claude Code or OpenCode) and type:
+Start a new session and type:
 
-```
-/team-develop
-```
+| Platform | Command |
+|----------|---------|
+| Claude Code | `/team-develop` |
+| OpenCode | `/team-develop` |
+| Codex | `$team-develop` |
 
 You should see the skill activate and begin the discovery phase.
 
@@ -150,10 +203,9 @@ You should see the skill activate and begin the discovery phase.
 ```
 team-develop-skill/
 ├── install.sh                                 # Automatic installer
-├── README.md                                  # Documentation (English)
-├── README_RU.md                               # Documentation (Russian)
+├── README.md                                  # Documentation (EN + RU)
 ├── commands/
-│   └── team-develop.md                        # Slash command entry point
+│   └── team-develop.md                        # Slash command entry point (Claude Code / OpenCode)
 └── skills/
     └── team-develop/
         ├── SKILL.md                           # Main orchestration logic
@@ -164,6 +216,17 @@ team-develop-skill/
         ├── role-software-engineer.md          # Software Engineer prompt
         └── role-validators.md                 # QA + UX validation prompts
 ```
+
+## Platform Compatibility
+
+| Feature | Claude Code | OpenCode | Codex |
+|---------|-------------|----------|-------|
+| Skill discovery | `~/.claude/skills/` | `~/.claude/skills/` | `~/.agents/skills/` |
+| Slash commands | `~/.claude/commands/` | `~/.config/opencode/commands/` | N/A |
+| Skill invocation | `/team-develop` | `/team-develop` | `$team-develop` |
+| Implicit activation | Yes | Yes | Yes |
+| SKILL.md format | `name` + `description` | `name` + `description` | `name` + `description` |
+| Subagents (Task tool) | Yes | Yes | Yes |
 
 ## Artifacts
 
@@ -202,9 +265,283 @@ To add a new role:
 
 ## Requirements
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [OpenCode](https://opencode.ai) CLI
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenCode](https://opencode.ai), or [OpenAI Codex](https://developers.openai.com/codex) CLI
 - No additional dependencies — the skill uses only built-in tools (Task, Read, Write, Glob)
 
 ## License
+
+MIT
+
+---
+
+# /team-develop — Виртуальная IT-команда
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+Скилл, который собирает виртуальную IT-команду для проектирования и реализации фичи от идеи до готового кода. Каждый участник команды — специализированный субагент с фокусной ролью. Команда работает как конвейер с утверждением пользователем на каждом этапе.
+
+**Поддерживаемые платформы:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | [OpenCode](https://opencode.ai) | [OpenAI Codex](https://developers.openai.com/codex)
+
+> **[English version above / Английская версия выше](#team-develop--virtual-it-team-skill)**
+
+## Быстрый старт
+
+### Claude Code / OpenCode
+
+```bash
+# Установка одной командой (Claude Code + OpenCode)
+curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+```
+
+Затем начните новую сессию и введите:
+
+```
+/team-develop
+```
+
+### OpenAI Codex
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+
+# Копируем файлы скилла в пользовательскую директорию Codex
+mkdir -p ~/.agents/skills/team-develop
+cp /tmp/team-develop-skill/skills/team-develop/* ~/.agents/skills/team-develop/
+```
+
+Затем начните сессию Codex и введите:
+
+```
+$team-develop
+```
+
+## Роли команды
+
+| Роль | Ответственность |
+|------|----------------|
+| **Тимлид** | Вы (AI в основной сессии). Оркестрирует конвейер, делегирует работу, никогда не пишет код сам. |
+| **Продакт-инженер** | Определяет продуктовую ценность, пользовательские истории, критерии приемки. Безжалостно режет скоуп (YAGNI). |
+| **Аналитик** | Декомпозирует требования в мелкие задачи с точными путями файлов и TDD-шагами. |
+| **UX-дизайнер** | Валидирует пользовательские потоки, определяет состояния UI, добавляет критерии доступности и взаимодействия. |
+| **QA-инженер** | Определяет Definition of Done для каждой задачи, пишет тест-сценарии (Given/When/Then). |
+| **Разработчик** | Реализует код по TDD. Коммит после каждой задачи. Строит ровно то, что указано в спецификации. |
+
+## Конвейер
+
+```
+/team-develop (или $team-develop в Codex)
+    |
+    Фаза 0: Исследование (брейншторм) ── ЧЕКПОЙНТ
+    |
+    Фаза 1: Продакт-инженер ── ЧЕКПОЙНТ
+    |
+    Фаза 2: Аналитик ── ЧЕКПОЙНТ
+    |
+    Фаза 3: UX-дизайнер ── ЧЕКПОЙНТ
+    |
+    Фаза 4: QA-инженер ── ЧЕКПОЙНТ
+    |
+    Фаза 5: Разработчик ── ЧЕКПОЙНТ (на каждую задачу)
+    |
+    Фаза 6: QA + UX валидация ── ЧЕКПОЙНТ
+    |
+    Готово!
+```
+
+На каждом чекпойнте результат этапа показывается вам. Можно утвердить, запросить изменения или пропустить этап.
+
+## Установка
+
+### Автоматическая (Claude Code + OpenCode)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+```
+
+Скрипт автоматически определяет вашу платформу (Claude Code, OpenCode или обе) и устанавливает файлы скиллов и команд в нужные директории.
+
+Опции:
+
+```bash
+# Установить только для Claude Code
+./install.sh --claude
+
+# Установить только для OpenCode
+./install.sh --opencode
+
+# Установить для обоих (по умолчанию)
+./install.sh
+
+# Удалить
+./install.sh --uninstall
+```
+
+### Ручная: Claude Code
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+
+# Копируем файлы скилла
+mkdir -p ~/.claude/skills
+cp -r /tmp/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
+
+# Копируем slash-команду
+mkdir -p ~/.claude/commands
+cp /tmp/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-develop.md
+```
+
+### Ручная: OpenCode
+
+OpenCode автоматически находит скиллы в `~/.claude/skills/`. Единственное отличие — путь для команд:
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+
+# Копируем файлы скилла (общий путь с Claude Code)
+mkdir -p ~/.claude/skills
+cp -r /tmp/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
+
+# Копируем slash-команду (путь для OpenCode)
+mkdir -p ~/.config/opencode/commands
+cp /tmp/team-develop-skill/commands/team-develop.md ~/.config/opencode/commands/team-develop.md
+```
+
+### Ручная: OpenAI Codex
+
+Codex находит скиллы в `~/.agents/skills/` (пользовательский уровень) или `.agents/skills/` (уровень проекта). Формат SKILL.md уже совместим — адаптация не требуется.
+
+#### Пользовательский уровень (доступен во всех проектах)
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+
+# Копируем файлы скилла
+mkdir -p ~/.agents/skills/team-develop
+cp /tmp/team-develop-skill/skills/team-develop/* ~/.agents/skills/team-develop/
+```
+
+#### Уровень проекта (доступен только в этом репозитории)
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+
+# Копируем файлы скилла в проект
+mkdir -p .agents/skills/team-develop
+cp /tmp/team-develop-skill/skills/team-develop/* .agents/skills/team-develop/
+```
+
+> **Примечание:** Codex не использует slash-команды (`/`). Скиллы вызываются через `$team-develop` или активируются неявно, когда задача совпадает с описанием скилла. Копировать файлы из директории `commands/` не нужно.
+
+#### Проверка установки
+
+Запустите новую сессию Codex и введите:
+
+```
+$team-develop
+```
+
+Скилл должен активироваться и начать фазу исследования.
+
+### Симлинк (для разработки)
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git ~/team-develop-skill
+
+# Скилл — Claude Code / OpenCode
+ln -s ~/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
+
+# Скилл — Codex
+ln -s ~/team-develop-skill/skills/team-develop ~/.agents/skills/team-develop
+
+# Команда — Claude Code
+ln -s ~/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-develop.md
+
+# Команда — OpenCode
+ln -s ~/team-develop-skill/commands/team-develop.md ~/.config/opencode/commands/team-develop.md
+```
+
+### Проверка установки
+
+Запустите новую сессию и введите:
+
+| Платформа | Команда |
+|-----------|---------|
+| Claude Code | `/team-develop` |
+| OpenCode | `/team-develop` |
+| Codex | `$team-develop` |
+
+Скилл должен активироваться и начать фазу исследования.
+
+## Структура файлов
+
+```
+team-develop-skill/
+├── install.sh                                 # Автоматический установщик
+├── README.md                                  # Документация (EN + RU)
+├── commands/
+│   └── team-develop.md                        # Slash-команда (Claude Code / OpenCode)
+└── skills/
+    └── team-develop/
+        ├── SKILL.md                           # Основная логика оркестрации
+        ├── role-product-engineer.md           # Промпт Продакт-инженера
+        ├── role-analyst.md                    # Промпт Аналитика
+        ├── role-ux-designer.md                # Промпт UX-дизайнера
+        ├── role-qa-engineer.md                # Промпт QA-инженера
+        ├── role-software-engineer.md          # Промпт Разработчика
+        └── role-validators.md                 # Промпты QA + UX валидации
+```
+
+## Совместимость платформ
+
+| Возможность | Claude Code | OpenCode | Codex |
+|-------------|-------------|----------|-------|
+| Обнаружение скиллов | `~/.claude/skills/` | `~/.claude/skills/` | `~/.agents/skills/` |
+| Slash-команды | `~/.claude/commands/` | `~/.config/opencode/commands/` | Нет |
+| Вызов скилла | `/team-develop` | `/team-develop` | `$team-develop` |
+| Неявная активация | Да | Да | Да |
+| Формат SKILL.md | `name` + `description` | `name` + `description` | `name` + `description` |
+| Субагенты (Task) | Да | Да | Да |
+
+## Артефакты
+
+Во время работы скилл создает документы планирования в вашем проекте:
+
+```
+docs/plans/
+├── YYYY-MM-DD-<feature>-design.md             # Результат брейншторма
+├── YYYY-MM-DD-<feature>-product-spec.md       # Пользовательские истории и критерии
+├── YYYY-MM-DD-<feature>-tasks.md              # План реализации
+├── YYYY-MM-DD-<feature>-ux-criteria.md        # UX-требования
+├── YYYY-MM-DD-<feature>-test-plan.md          # Тест-сценарии и DoD
+└── YYYY-MM-DD-<feature>-validation.md         # Финальный отчет валидации
+```
+
+## Рекомендуемые скиллы
+
+Агенты автоматически находят и применяют доступные скиллы. Для лучших результатов установите:
+
+- [superpowers](https://github.com/anthropics/claude-code-superpowers) — брейншторм, планы, TDD, верификация, дебаг
+- [web-design-guidelines](https://github.com/anthropics/claude-code-web-design-guidelines) — UX-дизайнер использует для валидации
+
+## Кастомизация
+
+Каждый промпт роли — отдельный markdown-файл. Чтобы настроить роль:
+
+1. Отредактируйте соответствующий файл `role-*.md`
+2. Измените формат вывода, инструкции или чеклист качества
+3. Оркестрация (SKILL.md) остается без изменений
+
+Чтобы добавить новую роль:
+
+1. Создайте `role-new-role.md` по тому же шаблону
+2. Добавьте фазу в конвейер SKILL.md
+3. Обновите поток чекпойнтов
+
+## Требования
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenCode](https://opencode.ai) или [OpenAI Codex](https://developers.openai.com/codex) CLI
+- Никаких дополнительных зависимостей — скилл использует только встроенные инструменты (Task, Read, Write, Glob)
+
+## Лицензия
 
 MIT
