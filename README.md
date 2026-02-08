@@ -16,7 +16,7 @@ A skill that assembles a virtual IT team to take a feature from idea to implemen
 
 ```bash
 # One-line install (Claude Code + OpenCode)
-curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Aligery/ai-team-develop-skill/main/install.sh | bash
 ```
 
 Then start a new session and type:
@@ -81,7 +81,7 @@ Every checkpoint presents the stage output to you and waits for approval. You ca
 ### Automatic (Claude Code + OpenCode)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Aligery/ai-team-develop-skill/main/install.sh | bash
 ```
 
 The script auto-detects your platform (Claude Code, OpenCode, or both) and installs skill files and slash commands to the correct locations.
@@ -290,7 +290,7 @@ MIT
 
 ```bash
 # Установка одной командой (Claude Code + OpenCode)
-curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Aligery/ai-team-develop-skill/main/install.sh | bash
 ```
 
 Затем начните новую сессию и введите:
@@ -355,7 +355,7 @@ $team-develop
 ### Автоматическая (Claude Code + OpenCode)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Aligery/ai-team-develop-skill/main/install.sh | bash
 ```
 
 Скрипт автоматически определяет вашу платформу (Claude Code, OpenCode или обе) и устанавливает файлы скиллов и команд в нужные директории.
