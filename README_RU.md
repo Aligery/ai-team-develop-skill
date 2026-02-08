@@ -1,12 +1,39 @@
-# /team-develop — Виртуальная IT-команда для Claude Code
+# /team-develop — Виртуальная IT-команда
 
-Скилл для Claude Code, который собирает виртуальную IT-команду для проектирования и реализации фичи от идеи до готового кода. Каждый участник команды — специализированный субагент с фокусной ролью. Команда работает как конвейер с утверждением пользователем на каждом этапе.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+Скилл, который собирает виртуальную IT-команду для проектирования и реализации фичи от идеи до готового кода. Каждый участник команды — специализированный субагент с фокусной ролью. Команда работает как конвейер с утверждением пользователем на каждом этапе.
+
+**Поддерживаемые платформы:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | [OpenCode](https://opencode.ai)
+
+> **[English version](README.md)**
+
+## Быстрый старт
+
+```bash
+# Установка одной командой (Claude Code + OpenCode)
+curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+```
+
+Или клонируйте и запустите локально:
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git
+cd team-develop-skill
+./install.sh
+```
+
+Затем начните новую сессию и введите:
+
+```
+/team-develop
+```
 
 ## Роли команды
 
 | Роль | Ответственность |
 |------|----------------|
-| **Тимлид** | Вы (Claude в основной сессии). Оркестрирует конвейер, делегирует работу, никогда не пишет код сам. |
+| **Тимлид** | Вы (AI в основной сессии). Оркестрирует конвейер, делегирует работу, никогда не пишет код сам. |
 | **Продакт-инженер** | Определяет продуктовую ценность, пользовательские истории, критерии приемки. Безжалостно режет скоуп (YAGNI). |
 | **Аналитик** | Декомпозирует требования в мелкие задачи с точными путями файлов и TDD-шагами. |
 | **UX-дизайнер** | Валидирует пользовательские потоки, определяет состояния UI, добавляет критерии доступности и взаимодействия. |
@@ -39,35 +66,78 @@
 
 ## Установка
 
-### Вариант 1: Копирование в директорию скиллов (рекомендуется)
+### Автоматическая (рекомендуется)
 
 ```bash
-# Клонируем репозиторий
-git clone <repo-url> /tmp/team-develop-skill
+curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+```
+
+Скрипт автоматически определяет вашу платформу (Claude Code, OpenCode или обе) и устанавливает файлы скиллов и команд в нужные директории.
+
+Опции:
+
+```bash
+# Установить только для Claude Code
+./install.sh --claude
+
+# Установить только для OpenCode
+./install.sh --opencode
+
+# Установить для обоих (по умолчанию)
+./install.sh
+
+# Удалить
+./install.sh --uninstall
+```
+
+### Ручная: Claude Code
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
 
 # Копируем файлы скилла
+mkdir -p ~/.claude/skills
 cp -r /tmp/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
 
 # Копируем slash-команду
+mkdir -p ~/.claude/commands
 cp /tmp/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-develop.md
 ```
 
-### Вариант 2: Симлинк (для разработки)
+### Ручная: OpenCode
+
+OpenCode автоматически находит скиллы в `~/.claude/skills/`. Единственное отличие — путь для команд:
 
 ```bash
-# Клонируем в удобное место
-git clone <repo-url> ~/team-develop-skill
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
 
-# Симлинк на скилл
+# Копируем файлы скилла (общий путь с Claude Code)
+mkdir -p ~/.claude/skills
+cp -r /tmp/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
+
+# Копируем slash-команду (путь для OpenCode)
+mkdir -p ~/.config/opencode/commands
+cp /tmp/team-develop-skill/commands/team-develop.md ~/.config/opencode/commands/team-develop.md
+```
+
+### Симлинк (для разработки)
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git ~/team-develop-skill
+
+# Скилл (работает и для Claude Code, и для OpenCode)
 ln -s ~/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
 
-# Симлинк на команду
+# Команда — Claude Code
 ln -s ~/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-develop.md
+
+# Команда — OpenCode
+ln -s ~/team-develop-skill/commands/team-develop.md ~/.config/opencode/commands/team-develop.md
 ```
 
 ### Проверка установки
 
-После установки запустите новую сессию Claude Code и введите:
+Запустите новую сессию (Claude Code или OpenCode) и введите:
 
 ```
 /team-develop
@@ -79,6 +149,7 @@ ln -s ~/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-deve
 
 ```
 team-develop-skill/
+├── install.sh                                 # Автоматический установщик
 ├── README.md                                  # Документация (English)
 ├── README_RU.md                               # Документация (Русский)
 ├── commands/
@@ -124,14 +195,15 @@ docs/plans/
 3. Оркестрация (SKILL.md) остается без изменений
 
 Чтобы добавить новую роль:
+
 1. Создайте `role-new-role.md` по тому же шаблону
 2. Добавьте фазу в конвейер SKILL.md
 3. Обновите поток чекпойнтов
 
 ## Требования
 
-- Claude Code CLI
-- Никаких дополнительных зависимостей — скилл использует только встроенные инструменты Claude Code (Task, Read, Write, Glob)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) или [OpenCode](https://opencode.ai) CLI
+- Никаких дополнительных зависимостей — скилл использует только встроенные инструменты (Task, Read, Write, Glob)
 
 ## Лицензия
 

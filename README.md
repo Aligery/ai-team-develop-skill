@@ -1,12 +1,39 @@
-# /team-develop — Virtual IT Team for Claude Code
+# /team-develop — Virtual IT Team Skill
 
-A Claude Code skill that assembles a virtual IT team to take a feature from idea to implementation. Each team member is a specialized subagent with a focused role, working as a pipeline with user approval at every stage.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+A skill that assembles a virtual IT team to take a feature from idea to implementation. Each team member is a specialized subagent with a focused role, working as a pipeline with user approval at every stage.
+
+**Supported platforms:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | [OpenCode](https://opencode.ai)
+
+> **[Русская версия / Russian version](README_RU.md)**
+
+## Quick Start
+
+```bash
+# One-line install (Claude Code + OpenCode)
+curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+```
+
+Or clone and run locally:
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git
+cd team-develop-skill
+./install.sh
+```
+
+Then start a new session and type:
+
+```
+/team-develop
+```
 
 ## Team Roles
 
 | Role | Responsibility |
 |------|---------------|
-| **Team Lead** | You (Claude in main conversation). Orchestrates the pipeline, delegates work, never writes code. |
+| **Team Lead** | You (AI in main conversation). Orchestrates the pipeline, delegates work, never writes code. |
 | **Product Engineer** | Defines product value, user stories, acceptance criteria. Cuts scope ruthlessly (YAGNI). |
 | **Analyst** | Decomposes requirements into bite-sized implementation tasks with exact file paths and TDD steps. |
 | **UX Designer** | Validates user flows, defines UI states, adds accessibility and interaction criteria. |
@@ -39,35 +66,78 @@ Every checkpoint presents the stage output to you and waits for approval. You ca
 
 ## Installation
 
-### Option 1: Copy to your Claude Code skills directory (recommended)
+### Automatic (recommended)
 
 ```bash
-# Clone the repository
-git clone <repo-url> /tmp/team-develop-skill
+curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/install.sh | bash
+```
+
+The script auto-detects your platform (Claude Code, OpenCode, or both) and installs skill files and slash commands to the correct locations.
+
+Options:
+
+```bash
+# Install for Claude Code only
+./install.sh --claude
+
+# Install for OpenCode only
+./install.sh --opencode
+
+# Install for both (default)
+./install.sh
+
+# Uninstall
+./install.sh --uninstall
+```
+
+### Manual: Claude Code
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
 
 # Copy skill files
+mkdir -p ~/.claude/skills
 cp -r /tmp/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
 
-# Copy the slash command
+# Copy slash command
+mkdir -p ~/.claude/commands
 cp /tmp/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-develop.md
 ```
 
-### Option 2: Symlink (for development)
+### Manual: OpenCode
+
+OpenCode discovers skills from `~/.claude/skills/` automatically. The only difference is the command location:
 
 ```bash
-# Clone to your preferred location
-git clone <repo-url> ~/team-develop-skill
+git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
 
-# Symlink skill
+# Copy skill files (shared path with Claude Code)
+mkdir -p ~/.claude/skills
+cp -r /tmp/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
+
+# Copy slash command (OpenCode-specific path)
+mkdir -p ~/.config/opencode/commands
+cp /tmp/team-develop-skill/commands/team-develop.md ~/.config/opencode/commands/team-develop.md
+```
+
+### Symlink (for development)
+
+```bash
+git clone https://github.com/anthropics/team-develop-skill.git ~/team-develop-skill
+
+# Skill (works for both Claude Code and OpenCode)
 ln -s ~/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
 
-# Symlink command
+# Command — Claude Code
 ln -s ~/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-develop.md
+
+# Command — OpenCode
+ln -s ~/team-develop-skill/commands/team-develop.md ~/.config/opencode/commands/team-develop.md
 ```
 
 ### Verify installation
 
-After installing, start a new Claude Code session and type:
+Start a new session (Claude Code or OpenCode) and type:
 
 ```
 /team-develop
@@ -79,8 +149,9 @@ You should see the skill activate and begin the discovery phase.
 
 ```
 team-develop-skill/
-├── README.md                                  # This file
-├── README_RU.md                               # Russian documentation
+├── install.sh                                 # Automatic installer
+├── README.md                                  # Documentation (English)
+├── README_RU.md                               # Documentation (Russian)
 ├── commands/
 │   └── team-develop.md                        # Slash command entry point
 └── skills/
@@ -124,14 +195,15 @@ Each role prompt is a separate markdown file. To customize a role:
 3. The orchestration (SKILL.md) stays unchanged
 
 To add a new role:
+
 1. Create `role-new-role.md` following the same template structure
 2. Add the phase to SKILL.md's pipeline
 3. Update the checkpoint flow
 
 ## Requirements
 
-- Claude Code CLI
-- No additional dependencies — the skill uses only built-in Claude Code tools (Task, Read, Write, Glob)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [OpenCode](https://opencode.ai) CLI
+- No additional dependencies — the skill uses only built-in tools (Task, Read, Write, Glob)
 
 ## License
 
