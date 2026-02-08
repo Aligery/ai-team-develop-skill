@@ -5,7 +5,7 @@ set -euo pipefail
 # Supports: Claude Code, OpenCode
 
 SKILL_NAME="team-develop"
-REPO_URL="https://github.com/anthropics/team-develop-skill.git"
+REPO_URL="https://github.com/Aligery/ai-team-develop-skill.git"
 
 # Colors
 RED='\033[0;31m'

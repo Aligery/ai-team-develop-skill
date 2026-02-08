@@ -28,7 +28,7 @@ Then start a new session and type:
 ### OpenAI Codex
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Copy skill files to user-level Codex skills directory
 mkdir -p ~/.agents/skills/team-develop
@@ -105,7 +105,7 @@ Options:
 ### Manual: Claude Code
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Copy skill files
 mkdir -p ~/.claude/skills
@@ -121,7 +121,7 @@ cp /tmp/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-deve
 OpenCode discovers skills from `~/.claude/skills/` automatically. The only difference is the command location:
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Copy skill files (shared path with Claude Code)
 mkdir -p ~/.claude/skills
@@ -139,7 +139,7 @@ Codex discovers skills from `~/.agents/skills/` (user-level) or `.agents/skills/
 #### User-level (available in all projects)
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Copy skill files
 mkdir -p ~/.agents/skills/team-develop
@@ -149,7 +149,7 @@ cp /tmp/team-develop-skill/skills/team-develop/* ~/.agents/skills/team-develop/
 #### Project-level (available only in this repo)
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Copy skill files into your project
 mkdir -p .agents/skills/team-develop
@@ -171,7 +171,7 @@ The skill should activate and begin the discovery phase.
 ### Symlink (for development)
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git ~/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git ~/team-develop-skill
 
 # Skill — Claude Code / OpenCode
 ln -s ~/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
@@ -246,8 +246,8 @@ docs/plans/
 
 The team agents auto-discover and apply available skills. For best results, install:
 
-- [superpowers](https://github.com/anthropics/claude-code-superpowers) — provides brainstorming, writing-plans, TDD, verification, debugging
-- [web-design-guidelines](https://github.com/anthropics/claude-code-web-design-guidelines) — UX Designer uses this for validation
+- [superpowers](https://github.com/obra/superpowers) — provides brainstorming, writing-plans, TDD, verification, debugging
+- [web-design-guidelines](https://github.com/vercel-labs/agent-skills) — UX Designer uses this for validation (`npx skills add vercel-labs/agent-skills --skill web-design-guidelines`)
 
 ## Customization
 
@@ -302,7 +302,7 @@ curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/
 ### OpenAI Codex
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Копируем файлы скилла в пользовательскую директорию Codex
 mkdir -p ~/.agents/skills/team-develop
@@ -379,7 +379,7 @@ curl -fsSL https://raw.githubusercontent.com/anthropics/team-develop-skill/main/
 ### Ручная: Claude Code
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Копируем файлы скилла
 mkdir -p ~/.claude/skills
@@ -395,7 +395,7 @@ cp /tmp/team-develop-skill/commands/team-develop.md ~/.claude/commands/team-deve
 OpenCode автоматически находит скиллы в `~/.claude/skills/`. Единственное отличие — путь для команд:
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Копируем файлы скилла (общий путь с Claude Code)
 mkdir -p ~/.claude/skills
@@ -413,7 +413,7 @@ Codex находит скиллы в `~/.agents/skills/` (пользовател
 #### Пользовательский уровень (доступен во всех проектах)
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Копируем файлы скилла
 mkdir -p ~/.agents/skills/team-develop
@@ -423,7 +423,7 @@ cp /tmp/team-develop-skill/skills/team-develop/* ~/.agents/skills/team-develop/
 #### Уровень проекта (доступен только в этом репозитории)
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git /tmp/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git /tmp/team-develop-skill
 
 # Копируем файлы скилла в проект
 mkdir -p .agents/skills/team-develop
@@ -445,7 +445,7 @@ $team-develop
 ### Симлинк (для разработки)
 
 ```bash
-git clone https://github.com/anthropics/team-develop-skill.git ~/team-develop-skill
+git clone https://github.com/Aligery/ai-team-develop-skill.git ~/team-develop-skill
 
 # Скилл — Claude Code / OpenCode
 ln -s ~/team-develop-skill/skills/team-develop ~/.claude/skills/team-develop
@@ -520,8 +520,8 @@ docs/plans/
 
 Агенты автоматически находят и применяют доступные скиллы. Для лучших результатов установите:
 
-- [superpowers](https://github.com/anthropics/claude-code-superpowers) — брейншторм, планы, TDD, верификация, дебаг
-- [web-design-guidelines](https://github.com/anthropics/claude-code-web-design-guidelines) — UX-дизайнер использует для валидации
+- [superpowers](https://github.com/obra/superpowers) — брейншторм, планы, TDD, верификация, дебаг
+- [web-design-guidelines](https://github.com/vercel-labs/agent-skills) — UX-дизайнер использует для валидации (`npx skills add vercel-labs/agent-skills --skill web-design-guidelines`)
 
 ## Кастомизация
 
