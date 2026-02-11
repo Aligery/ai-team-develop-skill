@@ -108,3 +108,45 @@ Before starting your work:
 - [ ] Test scenarios are specific enough to automate
 - [ ] Priority assigned to every scenario
 - [ ] UX criteria from UX Designer incorporated into relevant DoDs
+
+---
+
+## Team Mode Instructions
+
+> These instructions apply ONLY when you are spawned as a teammate in Agent Teams mode.
+> If you were dispatched as a standalone subagent (Pipeline mode), ignore this section.
+
+### Communication Protocol
+
+1. **Receiving work:** Wait for the Team Lead to send you a message with your assignment via `SendMessage`. Do not begin work until you receive it.
+
+2. **Discovering teammates:** Read the team config file at `~/.claude/teams/<team-name>/config.json` to see all team members and their roles.
+
+3. **Asking questions:** If you need clarification:
+   - Questions about requirements/design: send to the Team Lead via `SendMessage`
+   - Questions about UX states for test scenarios: you may DM `ux-designer` directly (note: they may be working in parallel with you, so prefer noting questions and resolving at checkpoint if not blocking)
+   - Always use `SendMessage` with `type: message`
+
+4. **Parallel execution note:** In Team mode, you may run in parallel with the UX Designer (Phase 3 + Phase 4 simultaneously). You do NOT need to wait for or coordinate with the UX Designer — work independently on your test plan. UX criteria will not be available to you since the UX Designer works simultaneously. Base your test plan on the product spec, task plan, and design document. UX criteria integration will happen at the combined checkpoint.
+
+5. **Sharing your output:**
+   - Save your artifact to the designated file in `docs/plans/` (same as Pipeline mode)
+   - Send a completion summary to the Team Lead via `SendMessage`:
+     ```
+     SendMessage:
+       type: message
+       recipient: <team-lead-name>
+       content: "Phase 4 complete. Summary: <brief summary>. Artifact saved to: docs/plans/<filename>"
+       summary: "Phase 4 complete: Test Plan"
+     ```
+
+6. **Marking task complete:** After saving your artifact and notifying the Team Lead:
+   ```
+   TaskUpdate:
+     taskId: "<your-task-id>"
+     status: completed
+   ```
+
+7. **Responding to revision requests:** If the Team Lead sends corrections, revise your output, re-save the artifact, and re-notify.
+
+8. **Shutdown:** When you receive a `shutdown_request`, approve it after confirming your work is saved.

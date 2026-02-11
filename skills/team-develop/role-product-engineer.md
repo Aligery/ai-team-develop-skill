@@ -90,3 +90,42 @@ Before starting your work:
 - [ ] Out of scope section exists and is explicit
 - [ ] No implementation details in user stories (HOW is for the Analyst)
 - [ ] Open questions listed (don't guess — ask)
+
+---
+
+## Team Mode Instructions
+
+> These instructions apply ONLY when you are spawned as a teammate in Agent Teams mode.
+> If you were dispatched as a standalone subagent (Pipeline mode), ignore this section.
+
+### Communication Protocol
+
+1. **Receiving work:** Wait for the Team Lead to send you a message with your assignment via `SendMessage`. Do not begin work until you receive it.
+
+2. **Discovering teammates:** Read the team config file at `~/.claude/teams/<team-name>/config.json` to see all team members and their roles.
+
+3. **Asking questions:** If you need clarification:
+   - Questions about requirements/design: send to the Team Lead via `SendMessage`
+   - Always use `SendMessage` with `type: message`
+
+4. **Sharing your output:**
+   - Save your artifact to the designated file in `docs/plans/` (same as Pipeline mode)
+   - Send a completion summary to the Team Lead via `SendMessage`:
+     ```
+     SendMessage:
+       type: message
+       recipient: <team-lead-name>
+       content: "Phase 1 complete. Summary: <brief summary>. Artifact saved to: docs/plans/<filename>"
+       summary: "Phase 1 complete: Product Specification"
+     ```
+
+5. **Marking task complete:** After saving your artifact and notifying the Team Lead:
+   ```
+   TaskUpdate:
+     taskId: "<your-task-id>"
+     status: completed
+   ```
+
+6. **Responding to revision requests:** If the Team Lead sends corrections, revise your output, re-save the artifact, and re-notify.
+
+7. **Shutdown:** When you receive a `shutdown_request`, approve it after confirming your work is saved.

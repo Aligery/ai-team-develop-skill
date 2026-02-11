@@ -52,10 +52,16 @@ $team-develop
 | **QA Engineer** | Defines Definition of Done per task, writes test scenarios (Given/When/Then). |
 | **Software Engineer** | Implements code following TDD. Commits after each task. Builds exactly what's specified. |
 
-## Pipeline
+## Orchestration Modes
+
+When you run `/team-develop`, the skill asks which mode to use:
+
+### Pipeline Mode (Default)
+
+Sequential subagent pipeline. Each phase runs one at a time. Works on all supported platforms.
 
 ```
-/team-develop (or $team-develop in Codex)
+/team-develop → choose Pipeline
     |
     Phase 0: Discovery (brainstorming) ── CHECKPOINT
     |
@@ -73,6 +79,46 @@ $team-develop
     |
     Done!
 ```
+
+### Team Mode (Experimental)
+
+Uses Claude Code **Agent Teams** for parallel execution. Teammates are persistent, communicate with each other directly via `SendMessage`, and coordinate via a shared task list.
+
+**Requires:**
+- Claude Code only (not available in OpenCode or Codex)
+- Environment variable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+```
+/team-develop → choose Team
+    |
+    Phase 0: Discovery (brainstorming) ── CHECKPOINT
+    |
+    Phase 0.5: Team Setup (spawn 5 teammates)
+    |
+    Phase 1: Product Engineer ── CHECKPOINT
+    |
+    Phase 2: Analyst ── CHECKPOINT
+    |
+    ┌──────────────┴──────────────┐
+    Phase 3: UX Designer    Phase 4: QA Engineer    ← PARALLEL
+    └──────────────┬──────────────┘
+                   ── CHECKPOINT
+    |
+    Phase 5: Software Engineer ── CHECKPOINT (per task)
+    |
+    ┌──────────────┴──────────────┐
+    Phase 6a: QA Valid.    Phase 6b: UX Valid.      ← PARALLEL
+    └──────────────┬──────────────┘
+                   ── CHECKPOINT
+    |
+    Team Cleanup → Done!
+```
+
+**Key differences from Pipeline mode:**
+- Phases 3+4 run in parallel (both depend only on Phase 2)
+- Phase 6 validators run in parallel
+- Teammates can DM each other for clarifications
+- Shared task list gives visibility into progress
 
 Every checkpoint presents the stage output to you and waits for approval. You can approve, request changes, or skip any stage.
 
@@ -227,6 +273,7 @@ team-develop-skill/
 | Implicit activation | Yes | Yes | Yes |
 | SKILL.md format | `name` + `description` | `name` + `description` | `name` + `description` |
 | Subagents (Task tool) | Yes | Yes | Yes |
+| Agent Teams (Team mode) | Yes (experimental) | No | No |
 
 ## Artifacts
 
@@ -267,6 +314,26 @@ To add a new role:
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenCode](https://opencode.ai), or [OpenAI Codex](https://developers.openai.com/codex) CLI
 - No additional dependencies — the skill uses only built-in tools (Task, Read, Write, Glob)
+
+**Team mode only:**
+
+```bash
+# Enable Agent Teams before starting Claude Code
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+claude
+```
+
+Or add to your `settings.json`:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
+```
+
+> **Note:** Team mode uses significantly more tokens than Pipeline mode (7 persistent teammates vs 6 sequential subagents). The time savings from parallelism may offset the cost for large features.
 
 ## License
 
@@ -326,10 +393,16 @@ $team-develop
 | **QA-инженер** | Определяет Definition of Done для каждой задачи, пишет тест-сценарии (Given/When/Then). |
 | **Разработчик** | Реализует код по TDD. Коммит после каждой задачи. Строит ровно то, что указано в спецификации. |
 
-## Конвейер
+## Режимы оркестрации
+
+При запуске `/team-develop` скилл спрашивает, какой режим использовать:
+
+### Pipeline-режим (по умолчанию)
+
+Последовательный конвейер субагентов. Каждая фаза запускается по одной. Работает на всех платформах.
 
 ```
-/team-develop (или $team-develop в Codex)
+/team-develop → выбрать Pipeline
     |
     Фаза 0: Исследование (брейншторм) ── ЧЕКПОЙНТ
     |
@@ -347,6 +420,46 @@ $team-develop
     |
     Готово!
 ```
+
+### Team-режим (экспериментальный)
+
+Использует **Agent Teams** Claude Code для параллельного выполнения. Тиммейты живут всю сессию, общаются друг с другом напрямую через `SendMessage` и координируются через общий список задач.
+
+**Требования:**
+- Только Claude Code (не доступен в OpenCode и Codex)
+- Переменная окружения: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+```
+/team-develop → выбрать Team
+    |
+    Фаза 0: Исследование (брейншторм) ── ЧЕКПОЙНТ
+    |
+    Фаза 0.5: Создание команды (spawn 5 тиммейтов)
+    |
+    Фаза 1: Продакт-инженер ── ЧЕКПОЙНТ
+    |
+    Фаза 2: Аналитик ── ЧЕКПОЙНТ
+    |
+    ┌──────────────┴──────────────┐
+    Фаза 3: UX-дизайнер   Фаза 4: QA-инженер      ← ПАРАЛЛЕЛЬНО
+    └──────────────┬──────────────┘
+                   ── ЧЕКПОЙНТ
+    |
+    Фаза 5: Разработчик ── ЧЕКПОЙНТ (на каждую задачу)
+    |
+    ┌──────────────┴──────────────┐
+    Фаза 6a: QA валид.    Фаза 6b: UX валид.       ← ПАРАЛЛЕЛЬНО
+    └──────────────┬──────────────┘
+                   ── ЧЕКПОЙНТ
+    |
+    Очистка команды → Готово!
+```
+
+**Ключевые отличия от Pipeline:**
+- Фазы 3+4 работают параллельно (обе зависят только от фазы 2)
+- Фаза 6 — валидаторы тоже параллельно
+- Тиммейты могут писать друг другу напрямую для уточнений
+- Общий список задач даёт видимость прогресса
 
 На каждом чекпойнте результат этапа показывается вам. Можно утвердить, запросить изменения или пропустить этап.
 
@@ -501,6 +614,7 @@ team-develop-skill/
 | Неявная активация | Да | Да | Да |
 | Формат SKILL.md | `name` + `description` | `name` + `description` | `name` + `description` |
 | Субагенты (Task) | Да | Да | Да |
+| Agent Teams (Team-режим) | Да (экспериментально) | Нет | Нет |
 
 ## Артефакты
 
@@ -541,6 +655,26 @@ docs/plans/
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenCode](https://opencode.ai) или [OpenAI Codex](https://developers.openai.com/codex) CLI
 - Никаких дополнительных зависимостей — скилл использует только встроенные инструменты (Task, Read, Write, Glob)
+
+**Только для Team-режима:**
+
+```bash
+# Включите Agent Teams перед запуском Claude Code
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+claude
+```
+
+Или добавьте в `settings.json`:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
+```
+
+> **Примечание:** Team-режим потребляет значительно больше токенов, чем Pipeline (7 постоянных тиммейтов vs 6 последовательных субагентов). Выигрыш по времени за счёт параллелизма может компенсировать стоимость для больших фич.
 
 ## Лицензия
 

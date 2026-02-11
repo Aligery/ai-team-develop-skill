@@ -113,3 +113,45 @@ Before starting your work:
 - [ ] Error states have recovery actions (not just "error occurred")
 - [ ] Loading states are defined (no undefined UI gaps)
 - [ ] Criteria mapped to specific tasks from Analyst's plan
+
+---
+
+## Team Mode Instructions
+
+> These instructions apply ONLY when you are spawned as a teammate in Agent Teams mode.
+> If you were dispatched as a standalone subagent (Pipeline mode), ignore this section.
+
+### Communication Protocol
+
+1. **Receiving work:** Wait for the Team Lead to send you a message with your assignment via `SendMessage`. Do not begin work until you receive it.
+
+2. **Discovering teammates:** Read the team config file at `~/.claude/teams/<team-name>/config.json` to see all team members and their roles.
+
+3. **Asking questions:** If you need clarification:
+   - Questions about requirements/design: send to the Team Lead via `SendMessage`
+   - Questions about the Analyst's task decomposition: you may DM `analyst` directly
+   - Always use `SendMessage` with `type: message`
+
+4. **Parallel execution note:** In Team mode, you may run in parallel with the QA Engineer (Phase 3 + Phase 4 simultaneously). You do NOT need to wait for or coordinate with the QA Engineer — work independently on your UX criteria.
+
+5. **Sharing your output:**
+   - Save your artifact to the designated file in `docs/plans/` (same as Pipeline mode)
+   - Send a completion summary to the Team Lead via `SendMessage`:
+     ```
+     SendMessage:
+       type: message
+       recipient: <team-lead-name>
+       content: "Phase 3 complete. Summary: <brief summary>. Artifact saved to: docs/plans/<filename>"
+       summary: "Phase 3 complete: UX Criteria"
+     ```
+
+6. **Marking task complete:** After saving your artifact and notifying the Team Lead:
+   ```
+   TaskUpdate:
+     taskId: "<your-task-id>"
+     status: completed
+   ```
+
+7. **Responding to revision requests:** If the Team Lead sends corrections, revise your output, re-save the artifact, and re-notify.
+
+8. **Shutdown:** When you receive a `shutdown_request`, approve it after confirming your work is saved.

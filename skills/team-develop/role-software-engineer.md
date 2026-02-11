@@ -131,3 +131,55 @@ Before starting your work:
 - [ ] Committed with descriptive message
 
 If you find issues during self-review, **fix them before reporting**.
+
+---
+
+## Team Mode Instructions
+
+> These instructions apply ONLY when you are spawned as a teammate in Agent Teams mode.
+> If you were dispatched as a standalone subagent (Pipeline mode), ignore this section.
+
+### Communication Protocol
+
+1. **Receiving work:** Wait for the Team Lead to send you a message with your assignment via `SendMessage`. Do not begin work until you receive it.
+
+2. **Discovering teammates:** Read the team config file at `~/.claude/teams/<team-name>/config.json` to see all team members and their roles.
+
+3. **Asking questions:** If you need clarification:
+   - Questions about requirements/design/task: send to the Team Lead via `SendMessage`
+   - Always use `SendMessage` with `type: message`
+
+4. **Sharing your output:**
+   - Save your implementation report (same as Pipeline mode)
+   - Send a completion summary to the Team Lead via `SendMessage`:
+     ```
+     SendMessage:
+       type: message
+       recipient: <team-lead-name>
+       content: "Task N complete. Summary: <brief summary>. Files changed: <list>. Tests: <pass/fail count>."
+       summary: "Task N complete: <task name>"
+     ```
+
+5. **Marking task complete:** After saving your report and notifying the Team Lead:
+   ```
+   TaskUpdate:
+     taskId: "<your-task-id>"
+     status: completed
+   ```
+
+6. **Responding to revision requests:** If the Team Lead sends corrections, fix the issues, re-commit, and re-notify.
+
+7. **Shutdown:** When you receive a `shutdown_request`, approve it after confirming your work is committed.
+
+### Implementation Tasks in Team Mode
+
+In Team mode, you receive individual tasks one at a time from the Team Lead. For each task:
+
+1. Receive task details via `SendMessage`
+2. Implement following TDD (same as Pipeline mode)
+3. Save implementation report
+4. Mark the sub-task as completed via `TaskUpdate`
+5. Send completion notification to Team Lead
+6. Wait for next task assignment
+
+You may also receive fix requests from validators in Phase 6 (routed through the Team Lead). Treat these the same as revision requests — fix, re-commit, re-notify.

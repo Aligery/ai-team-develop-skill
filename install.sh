@@ -44,6 +44,18 @@ trap cleanup EXIT
 
 install_skill_files() {
     local target="$HOME/.claude/skills/${SKILL_NAME}"
+
+    if [[ -L "$target" ]]; then
+        warn "Symlink detected at $target — skipping (managed manually)"
+        warn "To update, pull the latest changes in the linked repository"
+        return 0
+    fi
+
+    if [[ -d "$target" ]]; then
+        info "Existing installation found — updating..."
+        rm -rf "$target"
+    fi
+
     mkdir -p "$target"
     cp -r "${SOURCE_DIR}/skills/${SKILL_NAME}/"* "$target/"
     success "Skill files -> $target"
@@ -51,16 +63,30 @@ install_skill_files() {
 
 install_claude_command() {
     local target="$HOME/.claude/commands"
+    local file="$target/${SKILL_NAME}.md"
+
+    if [[ -L "$file" ]]; then
+        warn "Symlink detected at $file — skipping (managed manually)"
+        return 0
+    fi
+
     mkdir -p "$target"
-    cp "${SOURCE_DIR}/commands/${SKILL_NAME}.md" "$target/${SKILL_NAME}.md"
-    success "Claude Code command -> $target/${SKILL_NAME}.md"
+    cp "${SOURCE_DIR}/commands/${SKILL_NAME}.md" "$file"
+    success "Claude Code command -> $file"
 }
 
 install_opencode_command() {
     local target="$HOME/.config/opencode/commands"
+    local file="$target/${SKILL_NAME}.md"
+
+    if [[ -L "$file" ]]; then
+        warn "Symlink detected at $file — skipping (managed manually)"
+        return 0
+    fi
+
     mkdir -p "$target"
-    cp "${SOURCE_DIR}/commands/${SKILL_NAME}.md" "$target/${SKILL_NAME}.md"
-    success "OpenCode command -> $target/${SKILL_NAME}.md"
+    cp "${SOURCE_DIR}/commands/${SKILL_NAME}.md" "$file"
+    success "OpenCode command -> $file"
 }
 
 # ── Uninstall functions ────────────────────────────────────────────
@@ -101,7 +127,9 @@ usage() {
     cat <<EOF
 Usage: install.sh [OPTIONS]
 
-Install the /team-develop skill for Claude Code and/or OpenCode.
+Install or update the /team-develop skill for Claude Code and/or OpenCode.
+Re-running the installer on an existing installation will update all files
+to the latest version (old files are replaced cleanly).
 
 Options:
   --claude       Install for Claude Code only
@@ -109,7 +137,8 @@ Options:
   --uninstall    Remove the skill from all platforms
   -h, --help     Show this help message
 
-Without options, installs for both Claude Code and OpenCode.
+Without options, installs/updates for both Claude Code and OpenCode.
+Symlinked installations are detected and skipped (update via git pull).
 EOF
 }
 
@@ -158,8 +187,18 @@ main() {
         exit 1
     fi
 
+    # Detect if this is an update
+    local is_update=false
+    if [[ -d "$HOME/.claude/skills/${SKILL_NAME}" ]]; then
+        is_update=true
+    fi
+
     # Skill files go to ~/.claude/skills/ (shared by both platforms)
-    info "Installing skill files..."
+    if [[ "$is_update" == true ]]; then
+        info "Updating skill files (old version will be replaced)..."
+    else
+        info "Installing skill files..."
+    fi
     install_skill_files
 
     # Platform-specific commands
@@ -174,7 +213,11 @@ main() {
     fi
 
     echo ""
-    success "Installation complete!"
+    if [[ "$is_update" == true ]]; then
+        success "Update complete! All skill files and commands are now up to date."
+    else
+        success "Installation complete!"
+    fi
     echo ""
     echo "  Start a new session and type: /team-develop"
     echo ""
